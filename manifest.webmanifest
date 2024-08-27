@@ -1,0 +1,16 @@
+{
+  "name": "Simple Color Palette Test",
+  "short_name": "Palette Test",
+  "description": "Simple Color Palette Test.",
+  "lang": "en-US",
+  "display": "fullscreen",
+  "scope": "./",
+  "start_url": "./",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48 72x72 96x96 128x128 256x256 512x512",
+      "purpose": "maskable any"
+    }
+  ]
+}
