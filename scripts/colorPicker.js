@@ -2,6 +2,7 @@ const eyeDropperCheck = (event) => {
     if (!window.EyeDropper) {
         // alert("Your browser does not support the EyeDropper API");
         // return;
+        event.currentTarget.style.visibility = "hidden";
         event.currentTarget.remove();
     }
 }
