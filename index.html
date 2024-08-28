@@ -28,6 +28,10 @@
     <!-- COLOR PICKERS -->
     <section class="cont" id="color-picker">
         <h2>Color palette</h1>
+        <div>
+            <canvas id="colorWheel" width="200" height="200" onclick="pickColorWheel.pickColor(event)"></canvas>
+            <div id="colorDisplay">Selected Color: #FFFFFF</div>
+        </div>
         <ul id="colors"></ul>
         <div class="row">
             <button class="icon" onclick="colorPalette.addColor()">
@@ -44,7 +48,7 @@
         <h2>Contrast Check</h1>
         <button class="fade-colors-backg" onclick="testColors()">TEST</button>
         <div id="test-colors"></div>
-        <div>
+        <small>
             <div class="row">
                 <span class="material-symbols-rounded">new_releases</span>
                 If contrast ratio is same or upper 7, then passes WCAG AAA standard for normal text,
@@ -61,7 +65,7 @@
                 <span class="material-symbols-rounded">priority_high</span>
                 else has small contrast and may not be readable.
             </div>
-        </div>
+        </small>
     </section>
 </main>
 
@@ -70,6 +74,7 @@
 </body>
 </html>
 
+<script src="./scripts/commonColor.js"></script>
 <script src="./scripts/imageViewer.js"></script>
 <script src="./scripts/colorManagement.js"></script>
 <script src="./scripts/colorPicker.js"></script>

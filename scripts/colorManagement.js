@@ -1,6 +1,6 @@
-const defaultHex = "#808080";
-const defaultHexLight = "#FFFFFF";
-const defaultHexDark = "#000000";
+const defaultHex = "#FFFF00";
+const defaultHexLight = "#00FFFF";
+const defaultHexDark = "#FF00FF";
 const defaultHexs = [defaultHexLight, defaultHex, defaultHexDark];
 
 class ColorPalette {
@@ -11,6 +11,9 @@ class ColorPalette {
     /** @type {(event: any) => number} */
     #getColorIndex;
 
+    //overridable functions
+    updateColors = () => {}
+
     /**
      * @param {HTMLElement} colorListElement
      * @param {(index: number, hex: string) => HTMLElement} createElement
@@ -20,34 +23,27 @@ class ColorPalette {
         this.#colorListElement = colorListElement;
         this.#createElement = createElement;
         this.#getColorIndex = getColorIndex;
+        this.updateColors();
     }
 
-    colorHexs = [...defaultHexs];
+    #colorHexs = [...defaultHexs];
 
     #resetColors = () => {
-        this.colorHexs = [...defaultHexs];
-    }
-    
-    /**
-     * @param {number} index
-     * @param {string} hexColor
-     */
-    #updateColor = (index, hexColor) => {
-        this.colorHexs[index] = hexColor;
+        this.#colorHexs = [...defaultHexs];
     }
     
     #addDefaultColor = () => {
-        this.colorHexs.push(defaultHex);
+        this.#colorHexs.push(defaultHex);
     }
     
     /**
      * @param {number} index
      */
     #removeColor = (index) => {
-        if (this.colorHexs.length < 2)
+        if (this.#colorHexs.length < 2)
             return;
         
-        this.colorHexs.splice(index, 1);
+        this.#colorHexs.splice(index, 1);
     }
     
     /**
@@ -56,18 +52,18 @@ class ColorPalette {
      */
     #swapColors = (index, swapIndex) => {
         // console.log("moveColor", index, indexMove);
-        // console.log("moveColor", colorHexs[index], colorHexs[indexMove]);
-        [this.colorHexs[index], this.colorHexs[swapIndex]] = [this.colorHexs[swapIndex], this.colorHexs[index]];
+        // console.log("moveColor", #colorHexs[index], #colorHexs[indexMove]);
+        [this.#colorHexs[index], this.#colorHexs[swapIndex]] = [this.#colorHexs[swapIndex], this.#colorHexs[index]];
     }
 
     /**
      * @param {number} index
      */
     #moveColorUp = (index) => {
-        if (this.colorHexs.length < 2) return;
+        if (this.#colorHexs.length < 2) return;
         let indexMove = index - 1;
         if (indexMove <= -1)
-            indexMove = this.colorHexs.length - 1;
+            indexMove = this.#colorHexs.length - 1;
         this.#swapColors(index, indexMove);
     }
     
@@ -75,10 +71,10 @@ class ColorPalette {
      * @param {number} index
      */
     #moveColorDown = (index) => {
-        if (this.colorHexs.length < 2) return;
+        if (this.#colorHexs.length < 2) return;
         let indexMove = index++;
         [indexMove, index] = [index, indexMove];
-        if (indexMove > this.colorHexs.length - 1)
+        if (indexMove > this.#colorHexs.length - 1)
             indexMove = parseInt(0);
         this.#swapColors(index, indexMove);
     }
@@ -95,18 +91,26 @@ class ColorPalette {
 
     updateColors = () => {
         this.clearColors();
-        this.colorHexs.forEach(
+        this.#colorHexs.forEach(
             (hex, index) => {
                 const element = this.#createElement(index, hex);
                 this.#colorListElement.appendChild(element);
             }
         );
     }
+    
+    /**
+     * @param {number} index
+     * @param {string} hexColor
+     */
+    updateColor = (index, hexColor) => {
+        this.#colorHexs[index] = hexColor;
+    }
 
-    updateColor = (event) => {
+    updateColorByEvent = (event) => {
         const index = this.#getColorIndex(event);
         const hexColor = event.currentTarget.value;
-        this.#updateColor(index, hexColor);
+        this.updateColor(index, hexColor);
     }
 
     addColor = () => {
@@ -146,6 +150,13 @@ class ColorPalette {
     resetColors = () => {
         this.#resetColors();
         this.updateColors();
+    }
+
+    /**
+     * @returns {string[]}
+     */
+    getColorHexs = () => {
+        return this.#colorHexs;
     }
 }
 

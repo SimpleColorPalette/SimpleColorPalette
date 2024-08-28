@@ -201,6 +201,11 @@ section#color-picker input[type="text"] {
 }
 
 /* COLOR PICKER */
+canvas#colorWheel {
+  cursor: default;
+}
+
+/* IMAGE REFERENCE */
 #image-reference {
   display: flex;
   text-align: center;
@@ -243,7 +248,8 @@ ul#colors {
   justify-content: space-evenly;
 }
 #test-colors .combination {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
+  font-size: medium;
   width: 18rem;
 }
 #test-colors .contrast {

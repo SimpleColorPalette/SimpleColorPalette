@@ -14,6 +14,7 @@ DragAndDropImage(imageDrop, imageDisplay);
 
 //COLOR MANAGEMENT
 const colorListElement = document.getElementById("colors");
+const colorWheelCanvas = document.getElementById('colorWheel');
 /**
  * @param {number} index
  * @param {string} hexColor
@@ -25,9 +26,10 @@ const colorElement = (index, hex) => {
     element.innerHTML = 
         // '<li class="row" id="color-">'
         '<span>Color ' + (index + 1) + '</span>' +
-        '<input type="color" id="cp-' + index + '" onchange="clickColor(event,colorPalette)" value="' + hex + '"/>' +
-        '<input type="text"  id="hex-' + index + '" onchange="textColorChange(event,colorPalette)" value="' + hex + '"/>' +
+        '<input type="color" id="cp-' + index + '" onchange="clickColor(event,colorPalette,pickColorWheel)" value="' + hex + '"/>' +
+        '<input type="text"  id="hex-' + index + '" onchange="textColorChange(event,colorPalette,pickColorWheel)" value="' + hex + '"/>' +
         '<span></span>' +
+        '<button class="icon" onload="eyeDropperCheck(event)" onclick="eyeDropper(event)"><span class="material-symbols-rounded">colorize</span></button>' +
         '<button class="icon" onclick="colorPalette.removeColor(event)"><span class="material-symbols-rounded">close</span></button>' +
         '<button class="icon" onclick="colorPalette.moveColorUp(event)"><span class="material-symbols-rounded">arrow_upward</span></button>' +
         '<button class="icon" onclick="colorPalette.moveColorDown(event)"><span class="material-symbols-rounded">arrow_downward</span></button>'
@@ -43,7 +45,7 @@ const getColorIndex = (event) => {
     return parent.id.split("-")[1];
 }
 const colorPalette = new ColorPalette(colorListElement, colorElement, getColorIndex);
-colorPalette.updateColors();
+const pickColorWheel = new PickColorWheel(colorWheelCanvas, colorPalette);
 
 
 // COLOR COMBINATIONS
@@ -81,15 +83,16 @@ const testColors = () => {
     }
     
     const sameTogether = true;
+    const colorHexs = colorPalette.getColorHexs();
     if (sameTogether)
     {
-        const numColors = colorPalette.colorHexs.length;
+        const numColors = colorHexs.length;
         for (let indexBg = 0; indexBg < numColors; indexBg++)
         {
             for (let indexText = indexBg + 1; indexText < numColors; indexText++)
             {
-                const hexText = colorPalette.colorHexs[indexText];
-                const hexBg = colorPalette.colorHexs[indexBg];
+                const hexText = colorHexs[indexText];
+                const hexBg = colorHexs[indexBg];
                 combinationListElement.appendChild(
                     combinationElement(hexText, hexBg,
                                        indexText, indexBg,
@@ -103,17 +106,17 @@ const testColors = () => {
             }
         }
     } else {
-    colorPalette.colorHexs.forEach((hexBg, indexBg) => {
-        colorPalette.colorHexs.forEach((hexText, indexText) => {
-            if (indexBg != indexText) {
-                const contrast = checkContrast(hexText, hexBg);
-                combinationListElement.appendChild(
-                    combinationElement(hexText, hexBg,
-                                       indexText, indexBg,
-                                       contrast)
-                );
-            }
+        colorHexs.forEach((hexBg, indexBg) => {
+            colorHexs.forEach((hexText, indexText) => {
+                if (indexBg != indexText) {
+                    const contrast = checkContrast(hexText, hexBg);
+                    combinationListElement.appendChild(
+                        combinationElement(hexText, hexBg,
+                                        indexText, indexBg,
+                                        contrast)
+                    );
+                }
+            });
         });
-    });
-}
+    }
 }
