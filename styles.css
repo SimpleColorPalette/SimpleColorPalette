@@ -339,7 +339,7 @@ ul#colors {
   animation-timing-function: linear;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 480px) {
   #test-colors .combination {
     width: 12rem;
   }
