@@ -12,6 +12,9 @@ const eyeDropper = (event) => {
     const resultHex = parent.querySelector('input[type="text"]');
     const resultColor = parent.querySelector('input[type="color"]');
     const eyeDropper = new EyeDropper();
+    if (!window.EyeDropper) {
+        return;
+    }
     eyeDropper.open()
               .then((result) => {
                     resultHex.value = result.sRGBHex;
