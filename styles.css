@@ -248,9 +248,10 @@ ul#colors {
   justify-content: space-evenly;
 }
 #test-colors .combination {
+  width: 20rem;
   padding: 0.5rem 0.75rem;
   font-size: medium;
-  width: 18rem;
+  text-align: center;
 }
 #test-colors .contrast {
   width: 5rem;
@@ -336,4 +337,10 @@ ul#colors {
 .fade-colors-backg, .fade-colors {
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+}
+
+@media (max-width: 960px) {
+  #test-colors .combination {
+    width: 12rem;
+  }
 }
