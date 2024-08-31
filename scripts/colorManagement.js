@@ -10,30 +10,49 @@ class ColorPalette {
     #createElement;
     /** @type {(event: any) => number} */
     #getColorIndex;
+    /** @type {string[]} */
+    #colorHexs = [...defaultHexs];
 
     //overridable functions
     updateColors = () => {}
+
+    #loadSavedColors = () => {
+        /** @type {string?} */
+        let colorHexs = localStorage.getItem("SimpleColorPalette");
+        if (colorHexs != null)
+        {
+            console.log(colorHexs);
+            colorHexs = colorHexs.split(",");
+            if (colorHexs != null && colorHexs.length > 0)
+                this.#colorHexs = [...colorHexs];
+        }
+    }
+
+    #saveColors = () => {
+        localStorage.setItem("SimpleColorPalette", this.#colorHexs);
+    }
 
     /**
      * @param {HTMLElement} colorListElement
      * @param {(index: number, hex: string) => HTMLElement} createElement
      * @param {(event: any) => number} getColorIndex
      */
-    constructor(colorListElement, createElement, getColorIndex){
+    constructor(colorListElement, createElement, getColorIndex, colorHexs=[]){
         this.#colorListElement = colorListElement;
         this.#createElement = createElement;
         this.#getColorIndex = getColorIndex;
+        this.#loadSavedColors();
         this.updateColors();
     }
 
-    #colorHexs = [...defaultHexs];
-
     #resetColors = () => {
         this.#colorHexs = [...defaultHexs];
+        this.#saveColors();
     }
     
     #addDefaultColor = () => {
         this.#colorHexs.push(defaultHex);
+        this.#saveColors();
     }
     
     /**
@@ -44,6 +63,7 @@ class ColorPalette {
             return;
         
         this.#colorHexs.splice(index, 1);
+        this.#saveColors();
     }
     
     /**
@@ -54,6 +74,7 @@ class ColorPalette {
         // console.log("moveColor", index, indexMove);
         // console.log("moveColor", #colorHexs[index], #colorHexs[indexMove]);
         [this.#colorHexs[index], this.#colorHexs[swapIndex]] = [this.#colorHexs[swapIndex], this.#colorHexs[index]];
+        this.#saveColors();
     }
 
     /**
@@ -105,6 +126,7 @@ class ColorPalette {
      */
     updateColor = (index, hexColor) => {
         this.#colorHexs[index] = hexColor;
+        this.#saveColors();
     }
 
     updateColorByEvent = (event) => {

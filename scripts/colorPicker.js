@@ -98,7 +98,7 @@ class PickColorWheel {
         const radius = 8;
         // Draw the white circle
         this.#ctx.save();
-        this.#ctx.strokeStyle = 'black';
+        this.#ctx.strokeStyle = "rgb(0 0 0 / 50%)";
         this.#ctx.lineWidth = 1;
         this.#ctx.lineCap = "round";
         this.#ctx.beginPath();
