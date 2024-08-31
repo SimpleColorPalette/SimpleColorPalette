@@ -25,7 +25,7 @@ const colorElement = (index, hex) => {
     element.className = "row";
     element.innerHTML = 
         // '<li class="row" id="color-">'
-        '<span>Color ' + (index + 1) + '</span>' +
+        // '<span>Color ' + (index + 1) + '</span>' +
         '<input type="color" id="cp-' + index + '" onchange="clickColor(event,colorPalette,pickColorWheel)" value="' + hex + '"/>' +
         '<input type="text"  id="hex-' + index + '" onchange="textColorChange(event,colorPalette,pickColorWheel)" value="' + hex + '"/>' +
         '<span></span>' +

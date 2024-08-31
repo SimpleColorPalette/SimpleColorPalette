@@ -29,8 +29,12 @@
     <section class="cont" id="color-picker">
         <h2>Color palette</h1>
         <div>
-            <canvas id="colorWheel" width="200" height="200" onclick="pickColorWheel.pickColor(event)"></canvas>
-            <div id="colorDisplay">Selected Color: #FFFFFF</div>
+            <canvas id="colorWheel" width="200" height="200"
+                onclick="pickColorWheel.pickColor(event)"
+            ></canvas>
+            <!-- onpointerdown="pickColorWheel.enableMove(event, true)"
+            onpointerup="pickColorWheel.enableMove(event, false)"
+            onpointerout="pickColorWheel.enableMove(event, false)" -->
         </div>
         <ul id="colors"></ul>
         <div class="row">

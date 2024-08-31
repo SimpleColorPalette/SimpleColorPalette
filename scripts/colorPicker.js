@@ -66,7 +66,8 @@ class PickColorWheel {
     #colorWheelImageData
     // /** @type {{x:number, y:number, radius:number}[]} */
     // #circles
-    
+    /** @type {boolean} */
+    #enabledMove
 
     //overridable functions
     drawColorWheel = ()=>{}
@@ -90,24 +91,39 @@ class PickColorWheel {
     /**
      * @param {number} x 
      * @param {number} y 
+     * @param {string} hexColor 
      */
-    #drawCircle = (x, y) => {
+    #drawCircle = (x, y, hexColor) => {
+        const stroke = 2;
+        const radius = 8;
         // Draw the white circle
         this.#ctx.save();
         this.#ctx.strokeStyle = 'black';
-        this.#ctx.lineWidth = 2;
+        this.#ctx.lineWidth = 1;
+        this.#ctx.lineCap = "round";
         this.#ctx.beginPath();
-        this.#ctx.arc(x, y, 10, 0, 2 * Math.PI);
+        this.#ctx.moveTo(this.#center.x, this.#center.y);
+        this.#ctx.lineTo(x,y);
         this.#ctx.stroke();
-        this.#ctx.strokeStyle = 'white';
-        this.#ctx.lineWidth = 1.5;
+        this.#ctx.fillStyle = 'white';
+        this.#ctx.shadowColor = 'black';
+        this.#ctx.shadowBlur = stroke * 2;
         this.#ctx.beginPath();
-        this.#ctx.arc(x, y, 10, 0, 2 * Math.PI);
-        this.#ctx.stroke();
+        this.#ctx.arc(x, y, radius + stroke, 0, 2 * Math.PI);
+        this.#ctx.fill();
+        this.#ctx.fillStyle = hexColor;
+        this.#ctx.shadowBlur = 0;
+        this.#ctx.beginPath();
+        this.#ctx.arc(x, y, radius, 0, 2 * Math.PI);
+        this.#ctx.fill();
         this.#ctx.restore();
     }
 
-    #drawSelectionCircle = (hexColor) => {
+    /**
+     * @param {string} hexColor 
+     * @returns {{x:number, y:number}}
+     */
+    #getXYbyHexColor = (hexColor) => {
         const [r, g, b] = hexToRgb(hexColor);
         const [h, s, l] = rgbToHsl(r, g, b);
 
@@ -118,7 +134,7 @@ class PickColorWheel {
         // const y = this.#center.y + s * this.#radius * Math.sin(angle);
         const x = this.#center.x - s * this.#radius * Math.cos(angle);
         const y = this.#center.y - s * this.#radius * Math.sin(angle);
-        this.#drawCircle(x, y);
+        return {x:x, y:y};
     }
     
     //Chat--
@@ -161,20 +177,54 @@ class PickColorWheel {
         this.#ctx.putImageData(this.#colorWheelImageData, 0, 0);
         const colorHexs = this.#colorPalette.getColorHexs();
         colorHexs.forEach(hexColor => {
-            this.#drawSelectionCircle(hexColor);
+            const xy = this.#getXYbyHexColor(hexColor);
+            this.#drawCircle(xy.x, xy.y, hexColor);
         });
     }
 
-    #moveColorToCloser = (hexColor) => {
+    /**
+     * @param {{x:number, y:number}} n1 
+     * @param {{x:number, y:number}} n2 
+     * @returns {number}
+     */
+    #euclideanDist(n1, n2){
+        return Math.sqrt( (n2.x - n1.x) * (n2.x - n1.x) +
+                          (n2.y - n1.y) * (n2.y - n1.y) );
+    }
+    
+    /**
+     * @param {number[]} newRGB
+     * @param {number} x 
+     * @param {number} y 
+     */
+    #moveColorToCloser = (newRGB, x, y) => {
+        /** @type {string[]} */
         const colorHexs = this.#colorPalette.getColorHexs();
-        const sortedColorHexs = sortColorsByProximity(hexColor, colorHexs);
-        const index = colorHexs.indexOf(sortedColorHexs[0]);
-        this.#colorPalette.updateColor(index, hexColor);
+        /** @type {{x:number, y:number}[]} */
+        const colorsXYs = colorHexs.map(hexColor => this.#getXYbyHexColor(hexColor));
+        
+        let closestColor = {i: 0, distance: this.#radius * 4};
+        colorsXYs.forEach( (xy, i) => {
+            const newDist = this.#euclideanDist({x:x, y:y}, xy);
+            if (newDist < closestColor.distance)
+                closestColor = {i:i, distance:newDist};
+        })
+        const oldHexColor = colorHexs[closestColor.i];
+        
+        const [or, og, ob] = hexToRgb(oldHexColor);
+        const [oh, os, ol] = rgbToHsl(or, og, ob);
+        const [nh, ns, nl] = rgbToHsl(newRGB[0], newRGB[1], newRGB[2]);
+        const [r, g, b] = hslToRgb(nh, ns, ol);
+        const hexColor = rgbToHex(r, g, b);
+        
+        this.#colorPalette.updateColor(closestColor.i, hexColor);
         this.#colorPalette.updateColors();
         this.drawSelectedColors();
     }
 
     pickColor = (event) => {
+        // if (!this.#enabledMove) return;
+        
         const rect = this.#canvas.getBoundingClientRect();
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
@@ -184,9 +234,15 @@ class PickColorWheel {
         
         if (distance <= this.#radius) {
             const imageData = this.#ctx.getImageData(x, y, 1, 1).data;
-            const hexColor = `#${((1 << 24) + (imageData[0] << 16) + (imageData[1] << 8) + imageData[2]).toString(16).slice(1).toUpperCase()}`;
-            this.#moveColorToCloser(hexColor);
+            this.#moveColorToCloser(imageData, x, y);
         }
+    }
+
+    /**
+     * @param {boolean} enable 
+     */
+    enableMove = (event, enable)=>{
+        this.#enabledMove = enable;
     }
 }
 

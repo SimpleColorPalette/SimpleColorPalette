@@ -81,6 +81,23 @@ function rgbToHsl(r, g, b) {
 }
 
 /**
+ * @param {number} r
+ * @param {number} g
+ * @param {number} b
+ * @returns {string}
+ */
+const rgbToHex = (r, g, b) => {
+    return (
+        "#" +
+        ((1 << 24) + (r << 16) + (g << 8) + b)
+            .toString(16)
+            .slice(1)
+            .toUpperCase()
+    );
+    // `#${((1 << 24) + (imageData[0] << 16) + (imageData[1] << 8) + imageData[2]).toString(16).slice(1).toUpperCase()}`
+}
+
+/**
  * 
  * @param {number[]} rgb1 
  * @param {number[]} rgb2 
