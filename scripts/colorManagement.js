@@ -1,7 +1,5 @@
-const defaultHex = "#FFFF00";
-const defaultHexLight = "#00FFFF";
-const defaultHexDark = "#FF00FF";
-const defaultHexs = [defaultHexLight, defaultHex, defaultHexDark];
+const defaultHex = "#808080";
+const defaultHexs = ["#FFFF00", "#00FFFF", "#FF00FF"];
 
 class ColorPalette {
     /** @type {HTMLElement} */

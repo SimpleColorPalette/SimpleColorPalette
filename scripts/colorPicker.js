@@ -106,7 +106,7 @@ class PickColorWheel {
         this.#ctx.lineTo(x,y);
         this.#ctx.stroke();
         this.#ctx.fillStyle = 'white';
-        this.#ctx.shadowColor = 'black';
+        this.#ctx.shadowColor = "rgb(0 0 0 / 50%)";
         this.#ctx.shadowBlur = stroke * 2;
         this.#ctx.beginPath();
         this.#ctx.arc(x, y, radius + stroke, 0, 2 * Math.PI);
